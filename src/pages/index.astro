@@ -99,7 +99,11 @@ const publishers = [...new Map(
   const emptyState = document.querySelector<HTMLElement>('[data-testid="no-filter-results"]');
   const count = document.querySelector<HTMLElement>('[data-testid="filter-count"]');
 
-  filterForm?.addEventListener('change', () => {
+  if (!filterForm) {
+    throw new Error('Game filter form is missing');
+  }
+
+  const applyFilters = () => {
     const selectedCategories = new Set(
       [...filterForm.querySelectorAll<HTMLInputElement>('input[name="category"]:checked')].map((input) => input.value),
     );
@@ -119,5 +123,10 @@ const publishers = [...new Map(
     if (count) {
       count.textContent = `Showing ${visibleCount} ${visibleCount === 1 ? 'game' : 'games'}`;
     }
+  };
+
+  filterForm?.addEventListener('change', applyFilters);
+  filterForm?.addEventListener('reset', () => {
+    requestAnimationFrame(applyFilters);
   });
 </script>
