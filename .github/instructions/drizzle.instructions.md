@@ -51,6 +51,9 @@ export async function getAllGameIds(db: Database): Promise<number[]> {
 }
 ```
 
+- Every exported function in `db/` and `src/lib/` must have a TSDoc/JSDoc comment.
+- The comment must describe the function's purpose, every parameter (including the injectable `db` argument), and its return value. Document important error or ordering behavior when applicable.
+- Comments must explain intent or a non-obvious constraint; do not use documentation to restate the implementation.
 - Always `order by` a stable column (title) so static builds are deterministic.
 - Map raw rows to the app-facing `Game`/`Publisher`/`Category` types in one place; don't leak Drizzle row shapes into components.
 - Keep ordering/lookup logic in `games.ts`, not in pages.
@@ -67,3 +70,4 @@ Unit-test transforms directly and helpers against `createTestDatabase()`. See [`
 
 The data layer (`db/**/*.ts`, `src/lib/*.ts`) is type-checked by `npm run typecheck`, which runs the native **TypeScript 7** compiler (`tsgo`, from `@typescript/native-preview`) against `tsconfig.tsgo.json`. Keep helpers exported with explicit parameter and return types so `tsgo` can verify them. Linting is unaffected — ESLint + `typescript-eslint` still run on the classic `typescript` package.
 
+Use consistent formatting: two-space indentation, single quotes, semicolons, and explicit parameter and return types for exported functions. ESLint enforces the repository's TypeScript safety rules; keep documentation and type annotations aligned rather than suppressing a lint rule.
