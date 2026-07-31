@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
+import { eq } from 'drizzle-orm';
 import { createTestDatabase } from '../../db/test-helpers';
 import { categories, publishers, games } from '../../db/schema';
 import type { Database } from './db';
@@ -6,6 +7,7 @@ import {
     getAllGames,
     getAllGameIds,
     getGameById,
+    getFilteredGames,
 } from './games';
 
 async function seedGames(db: Database, count: number): Promise<void> {
@@ -62,5 +64,30 @@ describe('games data-access helpers', () => {
     it('returns null for a non-existent game', async () => {
         await seedGames(db, 2);
         expect(await getGameById(db, 99999)).toBeNull();
+    });
+
+    it('filters by any selected category and an optional publisher', async () => {
+        await seedGames(db, 3);
+        const [otherCategory] = await db
+            .insert(categories)
+            .values({ name: 'Action', description: 'other' })
+            .returning({ id: categories.id });
+        const [otherPublisher] = await db
+            .insert(publishers)
+            .values({ name: 'Pub Two', description: 'other' })
+            .returning({ id: publishers.id });
+        await db.update(games).set({ categoryId: otherCategory.id, publisherId: otherPublisher.id }).where(eq(games.title, 'Game 03'));
+
+        const filtered = await getFilteredGames(db, {
+            categoryIds: [otherCategory.id],
+            publisherId: otherPublisher.id,
+        });
+
+        expect(filtered.map((game) => game.title)).toEqual(['Game 03']);
+    });
+
+    it('returns all games when no filters are selected', async () => {
+        await seedGames(db, 2);
+        expect((await getFilteredGames(db, {})).map((game) => game.title)).toEqual(['Game 01', 'Game 02']);
     });
 });
