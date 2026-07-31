@@ -35,18 +35,22 @@ This is a crowdfunding platform for games with a developer theme. The applicatio
 ### Code formatting requirements
 
 - Use TypeScript with explicit types for function parameters and return values, especially in the data layer (`db/`, `src/lib/`)
+- Use two-space indentation, single quotes, and semicolons in TypeScript. Keep formatting consistent with the existing ESLint configuration.
 - Frontend code (TypeScript, Astro) must pass ESLint checks (`npm run lint`)
+- Comments must explain intent, constraints, or non-obvious decisions — never restate what the code already says. Keep comments current.
 
 ### Data Layer Patterns (Drizzle + libSQL)
 
 - Define tables in `db/schema.ts`; manage schema changes with drizzle-kit migrations - see `drizzle.instructions.md`
 - Keep data-access helpers in `src/lib/` with an **injectable `db`** argument so they're testable
+- Every exported function in `db/` and `src/lib/` must include TSDoc/JSDoc describing its purpose, parameters, and return value; explicitly document the injectable `db` parameter
 - Keep CSV/seed logic as pure functions in `db/transforms.ts`
 - Seed-derived values must be deterministic (no `Math.random`) so static builds are reproducible
 
 ### Astro Patterns
 
 - **Astro Pages/Components**: routing, layouts, content, and components are all `.astro` - see `astro.instructions.md`
+- Reusable `.astro` components must document their `Props` interface and any non-obvious prop contracts
 - Query data directly in page frontmatter via the `src/lib/` helpers (build-time, static output)
 - Dynamic routes use `getStaticPaths()` + `export const prerender = true`
 - Provide a branded `404.astro` (unknown routes are real 404s under static output)
