@@ -22,11 +22,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.11",
     "@libsql/client": "^0.17.4",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.1.5",
-    "drizzle-orm": "^0.45.2",
+    "drizzle-orm": "^0.45.4",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
